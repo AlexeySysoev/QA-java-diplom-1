@@ -8,6 +8,7 @@ import praktikum.Bun;
 import praktikum.Burger;
 import praktikum.Ingredient;
 import praktikum.IngredientType;
+import tools.ExpReceipt;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -68,9 +69,7 @@ public class BurgerTest {
     //Проверка корректности расчета цены
     public void checkGetPriceReturnWrightPrice(){
         Burger burger = new Burger();
-        //Bun bun = Mockito.mock(Bun.class);
-        //Mockito.when(bun.getPrice()).thenReturn(200F);
-        Bun bun = new Bun("test bun",100F);
+        Bun bun = new Bun("test bun",100f);
         burger.setBuns(bun);
         Ingredient ingredient1 = new Ingredient(IngredientType.SAUCE,"mustard", 100);
         Ingredient ingredient2 = new Ingredient(IngredientType.FILLING,"cheese", 150);
@@ -80,29 +79,21 @@ public class BurgerTest {
         Assert.assertTrue(burger.getPrice()==450);
     }
     @Test
-    //Проверка правильной сборки бургера
+    //Проверка корректности вывода рецепта бургера
     public void checkGetReceiptContainAllIngredients(){
         //Собрать бургер, сделать лист ингридиентов для проверки, сверить с результатом метода
         float price = 100;
-       List<String> testIngrs = new ArrayList<>();
-       testIngrs.add("test bun");
-       testIngrs.add("test mustard");
-       testIngrs.add("test cheese");
+        List<String> testIngrs = new ArrayList<>();
+        testIngrs.add("test bun");
+        testIngrs.add("test mustard");
+        testIngrs.add("test cheese");
         Burger burger = new Burger();
         Bun bun = new Bun(testIngrs.get(0),price);
         burger.addIngredient(new Ingredient(IngredientType.SAUCE, testIngrs.get(1),price));
-        burger.addIngredient(new Ingredient(IngredientType.SAUCE, testIngrs.get(2),price));
+        burger.addIngredient(new Ingredient(IngredientType.FILLING, testIngrs.get(2),price));
         burger.setBuns(bun);
-        System.out.println(burger.getReceipt());
-        StringBuilder expectedReceipt = new StringBuilder(String.format("(==== %s ====)%n", testIngrs.get(0)));
-        expectedReceipt.append(String.format("= %s %s =%n", "sauce",
-                testIngrs.get(1)));
-        expectedReceipt.append(String.format("= %s %s =%n", "sauce",
-                testIngrs.get(2)));
-        expectedReceipt.append(String.format("(==== %s ====)%n", testIngrs.get(0)));
-        expectedReceipt.append(String.format("%nPrice: %f%n", (price*4)));
-        System.out.println(expectedReceipt);
-        Assert.assertTrue(expectedReceipt.toString().equals(burger.getReceipt()));
-
+        //Делаем пецепт ожидаемого бургера
+        ExpReceipt expBurger = new ExpReceipt();
+        Assert.assertTrue(expBurger.buildExpReceipt(testIngrs, price).equals(burger.getReceipt()));
     }
 }
