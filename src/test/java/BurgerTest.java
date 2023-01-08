@@ -50,7 +50,6 @@ public class BurgerTest {
     public void checkRemoveIngredientRemoveDataFromList(){
         Burger burger = new Burger();
         Ingredient ingredient = Mockito.mock(Ingredient.class);
-        //Ingredient ingredient = new Ingredient(IngredientType.SAUCE,"mustard", 100);
         burger.addIngredient(ingredient);
         burger.addIngredient(ingredient);
         int size = burger.ingredients.size();
