@@ -23,7 +23,7 @@ public class BurgerTest {
 //    @Mock
 //    Ingredient ingredient;
     @Test
-    //Проверяем, что метод addIngredient добавляет в бъект в лист
+    //Проверяем, что метод addIngredient добавляет в объект в лист
     public void checkAddIngredientAddedNewIngredientToList(){
         Burger burger = new Burger();
         Ingredient ingredient = Mockito.mock(Ingredient.class);
@@ -102,3 +102,8 @@ public class BurgerTest {
         Assert.assertTrue(expBurger.buildExpReceipt(testIngrs, price).equals(burger.getReceipt()));
     }
 }
+/*
+Мокайте методы бургера через стабы.
+Не мокайте методы других классов через моки
+(сколько раз метод был вызван, какого типа аргументы передаются и тд)
+* */
