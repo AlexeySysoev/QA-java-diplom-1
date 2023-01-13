@@ -14,42 +14,27 @@ import java.util.ArrayList;
 import java.util.List;
 @RunWith(MockitoJUnitRunner.class)
 public class BurgerTest {
-    //setBuns ?? как это проверять и надо ли?
-    //addIngredient - Мокать Ingredient?
-    //removeIngredient - проверить лист ingredients на удаление итема
-    //moveIngredient - проверить ingredients на смену индекса
-    //getPrice - проверить расчет цены (возможные моки - bun и ingredient)
-    //getReceipt - проверить правильность рецепта (возможные моки - bun и ingredient)
-//    @Mock
-//    Ingredient ingredient;
+    @Mock
+    Ingredient ingredient;
     @Test
     //Проверяем, что метод addIngredient добавляет в объект в лист
     public void checkAddIngredientAddedNewIngredientToList(){
         Burger burger = new Burger();
         Ingredient ingredient = Mockito.mock(Ingredient.class);
-        //Ingredient ingredient = new Ingredient(IngredientType.SAUCE,"mustard", 100);
         burger.addIngredient(ingredient);
-//        List<Ingredient> expIngredient = new ArrayList<>();
-//        expIngredient.add(ingredient);
-//        Assert.assertEquals(expIngredient,burger.ingredients);
         Assert.assertTrue(burger.ingredients.size()!=0);
     }
-
     @Test
     //Проверяем, что метод addIngredient вызывается один раз
     public void checkAddIngredientAddedNewIngredientToListOneTime(){
         Burger burger = Mockito.mock(Burger.class);
-        Ingredient ingredient = Mockito.mock(Ingredient.class);
-        //Ingredient ingredient = new Ingredient(IngredientType.SAUCE,"mustard", 100);
         burger.addIngredient(ingredient);
         Mockito.verify(burger, Mockito.times(1)).addIngredient(ingredient);
     }
-
     @Test
     //Проверяем, что метод removeIngredient удаляет запись из листа
     public void checkRemoveIngredientRemoveDataFromList(){
         Burger burger = new Burger();
-        Ingredient ingredient = Mockito.mock(Ingredient.class);
         burger.addIngredient(ingredient);
         burger.addIngredient(ingredient);
         int size = burger.ingredients.size();
@@ -68,18 +53,18 @@ public class BurgerTest {
         burger.moveIngredient(0,1);
         Assert.assertEquals(expected, burger.ingredients.get(1).getName());
     }
+    @Mock
+    private Bun bun;
     @Test
-    //Проверка корректности расчета цены
+    //Проверка корректности расчета цены со стабами
     public void checkGetPriceReturnWrightPrice(){
-        float expPrice = 450f;
+        float expPrice = 460f;
         Burger burger = new Burger();
-        Bun bun = new Bun("test bun",100f);
+        Mockito.when(bun.getPrice()).thenReturn(100f);
+        Mockito.when(ingredient.getPrice()).thenReturn(130f);
         burger.setBuns(bun);
-        Ingredient ingredient1 = new Ingredient(IngredientType.SAUCE,"mustard", 100);
-        Ingredient ingredient2 = new Ingredient(IngredientType.FILLING,"cheese", 150);
-        burger.addIngredient(ingredient1);
-        burger.addIngredient(ingredient2);
-        burger.setBuns(bun);
+        burger.addIngredient(ingredient);
+        burger.addIngredient(ingredient);
         Assert.assertTrue(burger.getPrice()==expPrice);
     }
     @Test
