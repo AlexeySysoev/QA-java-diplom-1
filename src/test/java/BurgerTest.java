@@ -12,97 +12,88 @@ import tools.ExpReceipt;
 
 import java.util.ArrayList;
 import java.util.List;
+
+
 @RunWith(MockitoJUnitRunner.class)
 public class BurgerTest {
-    //setBuns ?? как это проверять и надо ли?
-    //addIngredient - Мокать Ingredient?
-    //removeIngredient - проверить лист ingredients на удаление итема
-    //moveIngredient - проверить ingredients на смену индекса
-    //getPrice - проверить расчет цены (возможные моки - bun и ingredient)
-    //getReceipt - проверить правильность рецепта (возможные моки - bun и ingredient)
-//    @Mock
-//    Ingredient ingredient;
+    @Mock
+    Ingredient ingredient;
+
     @Test
     //Проверяем, что метод addIngredient добавляет в объект в лист
-    public void checkAddIngredientAddedNewIngredientToList(){
+    public void checkAddIngredientAddedNewIngredientToList() {
         Burger burger = new Burger();
-        Ingredient ingredient = Mockito.mock(Ingredient.class);
-        //Ingredient ingredient = new Ingredient(IngredientType.SAUCE,"mustard", 100);
         burger.addIngredient(ingredient);
-//        List<Ingredient> expIngredient = new ArrayList<>();
-//        expIngredient.add(ingredient);
-//        Assert.assertEquals(expIngredient,burger.ingredients);
-        Assert.assertTrue(burger.ingredients.size()!=0);
+        Assert.assertTrue(burger.ingredients.size() != 0);
     }
 
     @Test
     //Проверяем, что метод addIngredient вызывается один раз
-    public void checkAddIngredientAddedNewIngredientToListOneTime(){
+    public void checkAddIngredientAddedNewIngredientToListOneTime() {
         Burger burger = Mockito.mock(Burger.class);
-        Ingredient ingredient = Mockito.mock(Ingredient.class);
-        //Ingredient ingredient = new Ingredient(IngredientType.SAUCE,"mustard", 100);
         burger.addIngredient(ingredient);
         Mockito.verify(burger, Mockito.times(1)).addIngredient(ingredient);
     }
 
     @Test
     //Проверяем, что метод removeIngredient удаляет запись из листа
-    public void checkRemoveIngredientRemoveDataFromList(){
+    public void checkRemoveIngredientRemoveDataFromList() {
         Burger burger = new Burger();
-        Ingredient ingredient = Mockito.mock(Ingredient.class);
         burger.addIngredient(ingredient);
         burger.addIngredient(ingredient);
         int size = burger.ingredients.size();
         burger.removeIngredient(0);
-        Assert.assertEquals(size-1, burger.ingredients.size());
+        Assert.assertEquals(size - 1, burger.ingredients.size());
     }
+
+    @Mock
+    Ingredient ingredient1;
+    Ingredient ingredient2;
+
     @Test
     //Проверка корректной работы moveIngredient
-    public void checkMoveIngredientCorrectReplace(){
+    public void checkMoveIngredientCorrectReplace() {
         Burger burger = new Burger();
-        Ingredient ingredient1 = new Ingredient(IngredientType.SAUCE,"mustard", 100);
-        Ingredient ingredient2 = new Ingredient(IngredientType.SAUCE,"hot pepper", 50);
         burger.addIngredient(ingredient1);
         burger.addIngredient(ingredient2);
-        String expected = burger.ingredients.get(0).getName();
-        burger.moveIngredient(0,1);
-        Assert.assertEquals(expected, burger.ingredients.get(1).getName());
+        burger.moveIngredient(0, 1);
+        Assert.assertEquals(ingredient1, burger.ingredients.get(1));
     }
+
+    @Mock
+    private Bun bun;
+
     @Test
-    //Проверка корректности расчета цены
-    public void checkGetPriceReturnWrightPrice(){
-        float expPrice = 450f;
+    //Проверка корректности расчета цены со стабами
+    public void checkGetPriceReturnWrightPrice() {
+        float expPrice = 460f;
         Burger burger = new Burger();
-        Bun bun = new Bun("test bun",100f);
+        Mockito.when(bun.getPrice()).thenReturn(100f);
+        Mockito.when(ingredient.getPrice()).thenReturn(130f);
         burger.setBuns(bun);
-        Ingredient ingredient1 = new Ingredient(IngredientType.SAUCE,"mustard", 100);
-        Ingredient ingredient2 = new Ingredient(IngredientType.FILLING,"cheese", 150);
-        burger.addIngredient(ingredient1);
-        burger.addIngredient(ingredient2);
-        burger.setBuns(bun);
-        Assert.assertTrue(burger.getPrice()==expPrice);
+        burger.addIngredient(ingredient);
+        burger.addIngredient(ingredient);
+        Assert.assertTrue(burger.getPrice() == expPrice);
     }
+
+    @Mock
+    Bun testBun;
+
     @Test
     //Проверка корректности вывода рецепта бургера
-    public void checkGetReceiptContainAllIngredients(){
+    public void checkGetReceiptContainAllIngredients1() {
         //Собрать бургер, сделать лист ингридиентов для проверки, сверить с результатом метода
-        float price = 100;
-        List<String> testIngrs = new ArrayList<>();
-        testIngrs.add("test bun");
-        testIngrs.add("test mustard");
-        testIngrs.add("test cheese");
         Burger burger = new Burger();
-        Bun bun = new Bun(testIngrs.get(0),price);
-        burger.addIngredient(new Ingredient(IngredientType.SAUCE, testIngrs.get(1),price));
-        burger.addIngredient(new Ingredient(IngredientType.FILLING, testIngrs.get(2),price));
-        burger.setBuns(bun);
+        burger.addIngredient(ingredient);
+        burger.setBuns(testBun);
+        Mockito.when(ingredient.getType()).thenReturn(IngredientType.SAUCE);
+        Mockito.when(ingredient.getName()).thenReturn("mustard");
+        Mockito.when(testBun.getName()).thenReturn("test bun");
         //Делаем пецепт ожидаемого бургера
+        List<String> testIngredients = new ArrayList<>();
+        testIngredients.add("test bun");
+        testIngredients.add("mustard");
         ExpReceipt expBurger = new ExpReceipt();
-        Assert.assertTrue(expBurger.buildExpReceipt(testIngrs, price).equals(burger.getReceipt()));
+        Assert.assertTrue(expBurger.buildExpReceipt(testIngredients, 0).equals(burger.getReceipt()));
     }
 }
-/*
-Мокайте методы бургера через стабы.
-Не мокайте методы других классов через моки
-(сколько раз метод был вызван, какого типа аргументы передаются и тд)
-* */
