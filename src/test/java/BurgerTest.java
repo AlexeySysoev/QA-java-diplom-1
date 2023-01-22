@@ -81,7 +81,7 @@ public class BurgerTest {
 
     @Test
     //Проверка корректности вывода рецепта бургера
-    public void checkGetReceiptContainAllIngredients1() {
+    public void checkGetReceiptContainAllIngredients() {
         //Собрать бургер, сделать лист ингридиентов для проверки, сверить с результатом метода
         Burger burger = new Burger();
         burger.addIngredient(ingredient);
